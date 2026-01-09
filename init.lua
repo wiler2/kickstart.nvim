@@ -192,6 +192,12 @@ vim.keymap.set('v', 'x', '"_x')
 
 vim.keymap.set('i', '<C-f>', '<C-x><C-f>', { noremap = true, silent = true, desc = 'File path completion' })
 
+vim.keymap.set('n', '<C-i>', function()
+  vim.cmd 'normal! gUiw' -- uppercase word
+  vim.cmd 'normal! e' -- go to end of word
+end, { silent = true, desc = 'Uppercase word)' })
+
+-- Type 'hh' and press Space/Enter -> it becomes '0x'
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
