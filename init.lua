@@ -192,10 +192,10 @@ vim.keymap.set('v', 'x', '"_x')
 
 vim.keymap.set('i', '<C-f>', '<C-x><C-f>', { noremap = true, silent = true, desc = 'File path completion' })
 
-vim.keymap.set('n', '<C-i>', function()
-  vim.cmd 'normal! gUiw' -- uppercase word
-  vim.cmd 'normal! e' -- go to end of word
-end, { silent = true, desc = 'Uppercase word)' })
+-- vim.keymap.set('n', '<C-i>', function()
+--   vim.cmd 'normal! gUiw' -- uppercase word
+--   vim.cmd 'normal! e' -- go to end of word
+-- end, { silent = true, desc = 'Uppercase word)' })
 
 -- Type 'hh' and press Space/Enter -> it becomes '0x'
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
@@ -873,7 +873,7 @@ require('lazy').setup({
       completion = {
         -- By default, you may press `<c-space>` to show the documentation.
         -- Optionally, set `auto_show = true` to show the documentation after a delay.
-        documentation = { auto_show = false, auto_show_delay_ms = 500 },
+        documentation = { auto_show = true, auto_show_delay_ms = 500 },
       },
 
       sources = {
@@ -892,7 +892,7 @@ require('lazy').setup({
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'lua' },
+      fuzzy = { implementation = 'prefer_rust_with_warning' },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
