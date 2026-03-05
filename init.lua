@@ -183,8 +183,8 @@ vim.keymap.set('i', 'jk', '<ESC>')
 vim.keymap.set('n', 'x', '"_x')
 
 -- Normal mode: Delete (d) and Delete line (dd) won't copy
-vim.keymap.set('n', 'd', '"_d')
-vim.keymap.set('n', 'D', '"_D')
+-- vim.keymap.set('n', 'd', '"_d')
+-- vim.keymap.set('n', 'D', '"_D')
 
 -- Visual mode: Deleting selected text won't copy
 vim.keymap.set('v', 'd', '"_d')
@@ -882,6 +882,15 @@ require('lazy').setup({
         default = { 'lsp', 'path', 'snippets', 'lazydev' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
+
+          lsp = {
+            module = 'blink.cmp.sources.lsp',
+            score_offset = 90,
+          },
+          snippets = {
+            module = 'blink.cmp.sources.snippets',
+            score_offset = -10,
+          },
         },
       },
 
@@ -894,7 +903,11 @@ require('lazy').setup({
       -- the rust implementation via `'prefer_rust_with_warning'`
       --
       -- See :h blink-cmp-config-fuzzy for more information
-      fuzzy = { implementation = 'prefer_rust_with_warning' },
+      fuzzy = {
+        implementation = 'prefer_rust_with_warning',
+        use_typo_resistance = true,
+        sorts = { 'score', 'sort_text' },
+      },
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },

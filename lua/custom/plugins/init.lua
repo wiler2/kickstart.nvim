@@ -4,6 +4,11 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    'urtzienriquez/learnlua.nvim',
+    cmd = 'Learn',
+  },
+
+  {
     'folke/flash.nvim',
     --- @type Flash.Config
     opts = {
