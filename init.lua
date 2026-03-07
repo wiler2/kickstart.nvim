@@ -176,6 +176,12 @@ vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Open new tab
+vim.keymap.set('n', '<leader>tn', '<cmd>tabnew<CR>', { desc = '[T]ab [N]ew empty' })
+
+-- Instantly append a semicolon to the end of the line while in Insert mode
+vim.keymap.set('i', '<C-;>', '<C-o>A;', { desc = 'Append semicolon at end of line' })
+
 vim.keymap.set('n', ';', ':', { desc = 'CMD enter command mode' })
 vim.keymap.set('i', 'jk', '<ESC>')
 
@@ -696,7 +702,19 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        clangd = {},
+        clangd = {
+          cmd = {
+            'clangd',
+            '--background-index',
+            '--clang-tidy',
+            '--header-insertion=iwyu',
+            '--completion-style=detailed',
+            '--function-arg-placeholders',
+            '--fallback-style=llvm',
+            -- This line fixes your error by telling clangd what to use
+            -- if it can't find a compile_commands.json or compile_flags.txt
+          },
+        },
         -- gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
