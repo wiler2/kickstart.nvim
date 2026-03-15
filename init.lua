@@ -118,6 +118,8 @@ vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
 
+vim.opt.conceallevel = 2
+
 -- Enable break indent
 vim.o.breakindent = true
 
@@ -246,6 +248,18 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.hl.on_yank()
   end,
 })
+
+-- Toggle Render Markdown (The "Notion" view)
+vim.keymap.set('n', '<leader>mt', ':RenderMarkdown toggle<CR>', { desc = 'Toggle Markdown Rendering' })
+
+-- Toggle Conceal (The "Clean" view)
+vim.keymap.set('n', '<leader>mc', function()
+  if vim.opt.conceallevel:get() == 0 then
+    vim.opt.conceallevel = 2
+  else
+    vim.opt.conceallevel = 0
+  end
+end, { desc = 'Toggle Markdown Conceal' })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -923,7 +937,6 @@ require('lazy').setup({
       -- See :h blink-cmp-config-fuzzy for more information
       fuzzy = {
         implementation = 'prefer_rust_with_warning',
-        use_typo_resistance = true,
         sorts = { 'score', 'sort_text' },
       },
 
