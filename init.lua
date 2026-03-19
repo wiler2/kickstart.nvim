@@ -143,6 +143,10 @@ vim.o.timeoutlen = 300
 vim.o.splitright = true
 vim.o.splitbelow = true
 
+vim.o.tabstop = 4
+vim.o.shiftwidth = 4
+vim.o.expandtab = true
+
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
@@ -195,10 +199,26 @@ vim.keymap.set('n', 'x', '"_x')
 -- vim.keymap.set('n', 'D', '"_D')
 
 -- Visual mode: Deleting selected text won't copy
-vim.keymap.set('v', 'd', '"_d')
-vim.keymap.set('v', 'x', '"_x')
-
+-- vim.keymap.set('v', 'd', '"_d')
+-- vim.keymap.set('v', 'x', '"_x')
+--
 vim.keymap.set('i', '<C-f>', '<C-x><C-f>', { noremap = true, silent = true, desc = 'File path completion' })
+
+-- Press <leader>nl (New Link) to turn the word under cursor into a [[Link]]
+vim.keymap.set('n', '<leader>nl', 'viw<cmd>ObsidianLink<CR>', { desc = 'Link word under cursor' })
+
+-- Add this to your init.lua keymaps section
+-- Pressing 'gl' in normal mode will pop up the full error message in a floating window
+vim.keymap.set('n', 'gl', function()
+  vim.diagnostic.open_float(nil, {
+    focusable = false,
+    close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
+    border = 'rounded',
+    source = 'always',
+    prefix = ' ',
+    scope = 'cursor',
+  })
+end, { desc = 'Show full diagnostic message' })
 
 -- vim.keymap.set('n', '<C-i>', function()
 --   vim.cmd 'normal! gUiw' -- uppercase word
@@ -728,6 +748,10 @@ require('lazy').setup({
             -- This line fixes your error by telling clangd what to use
             -- if it can't find a compile_commands.json or compile_flags.txt
           },
+
+          init_options = {
+            fallbackFlags = { '-std=c++23' },
+          },
         },
         -- gopls = {},
         -- pyright = {},
@@ -825,11 +849,20 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        cpp = { 'clang-format' },
+        c = { 'clang-format' },
+
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
         -- javascript = { "prettierd", "prettier", stop_after_first = true },
+      },
+      formatters = {
+        ['clang-format'] = {
+          -- Force it to explicitly read the file from your home directory
+          prepend_args = { '-style=file:' .. vim.fn.expand '~/.clang-format' },
+        },
       },
     },
   },
@@ -987,14 +1020,42 @@ require('lazy').setup({
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
-      require('mini.ai').setup { n_lines = 500 }
+      -- require('mini.ai').setup { n_lines = 500 }
+
+      local gen_spec = require('mini.ai').gen_spec
+      require('mini.ai').setup {
+        n_lines = 500,
+        custom_textobjects = {
+          -- 'f' remains simple function calls like std::print()
+
+          -- 'F' uses the new dictionary to select entire C++ function definitions!
+          f = gen_spec.treesitter { a = '@function.outer', i = '@function.inner' },
+
+          -- 'c' uses the dictionary to select entire C++ classes!
+          c = gen_spec.treesitter { a = '@class.outer', i = '@class.inner' },
+
+          -- 'o' (loop) uses the dictionary to select entire while/for loops!
+          o = gen_spec.treesitter { a = '@loop.outer', i = '@loop.inner' },
+        },
+      }
 
       -- Add/delete/replace surroundings (brackets, quotes, etc.)
       --
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
-      require('mini.surround').setup()
+      require('mini.surround').setup {
+        -- Map mini.surround to 'gs' so it doesn't fight with flash.nvim's 's' key
+        mappings = {
+          add = 'gsa', -- Add surrounding
+          delete = 'gsd', -- Delete surrounding
+          replace = 'gsr', -- Replace surrounding
+          find = 'gsf', -- Find surrounding (to the right)
+          find_left = 'gsF', -- Find surrounding (to the left)
+          highlight = 'gsh', -- Highlight surrounding
+          update_n_lines = 'gsn', -- Update `n_lines`
+        },
+      }
 
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
@@ -1033,7 +1094,7 @@ require('lazy').setup({
         --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { 'ruby' },
       },
-      indent = { enable = true, disable = { 'ruby' } },
+      indent = { enable = true, disable = { 'ruby', 'c', 'cpp' } },
     },
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
