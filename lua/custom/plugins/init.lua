@@ -4,6 +4,51 @@
 -- See the kickstart.nvim README for more information
 return {
   {
+    'nvimdev/lspsaga.nvim',
+    event = 'LspAttach',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('lspsaga').setup {
+        ui = {
+          -- This makes the hover window match your diagnostic floating windows
+          border = 'rounded',
+          devicon = true,
+          title = true,
+        },
+        hover = {
+          max_width = 0.6,
+          open_link = 'gx',
+          -- Press <C-f> and <C-b> to scroll the hover documentation
+        },
+        symbol_in_winbar = {
+          enable = ture, -- Disable if you prefer a cleaner top bar
+        },
+      }
+    end,
+  },
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    opts = {
+      -- add any options here
+      lsp = {
+        hover = { enabled = false }, -- Let Lspsaga handle this
+        signature = { enabled = false },
+      },
+    },
+    dependencies = {
+      -- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+      'MunifTanjim/nui.nvim',
+      --   `nvim-notify` is only needed, if you want to use the notification view.
+      --   If not available, we use `mini` as the fallback
+      'rcarriga/nvim-notify',
+    },
+  },
+
+  {
     'nvim-treesitter/nvim-treesitter-textobjects',
     branch = 'main',
     -- lazy = true,

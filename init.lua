@@ -201,24 +201,39 @@ vim.keymap.set('n', 'x', '"_x')
 -- Visual mode: Deleting selected text won't copy
 -- vim.keymap.set('v', 'd', '"_d')
 -- vim.keymap.set('v', 'x', '"_x')
---
+
 vim.keymap.set('i', '<C-f>', '<C-x><C-f>', { noremap = true, silent = true, desc = 'File path completion' })
+
+-- Map Shift + K to Lspsaga's hover
+vim.keymap.set('n', 'K', '<cmd>Lspsaga hover_doc<cr>', { desc = 'Lspsaga Hover' })
+
+-- Lspsaga: Peek Definition (shows definition in a floating window)
+vim.keymap.set('n', 'gp', '<cmd>Lspsaga peek_definition<CR>', { desc = 'Lspsaga Peek Definition' })
+
+-- Lspsaga: Finder (shows references and implementation in a clean UI)
+vim.keymap.set('n', 'gh', '<cmd>Lspsaga finder<CR>', { desc = 'Lspsaga Finder' })
+
+-- Lspsaga: Code Action (beautiful floating window for code actions)
+-- vim.keymap.set({ 'n', 'v' }, '<leader>ca', '<cmd>Lspsaga code_action<CR>', { desc = 'Lspsaga Code Action' })
+
+-- Show diagnostics for the current line in a beautiful floating window
+vim.keymap.set('n', 'gl', '<cmd>Lspsaga show_line_diagnostics<CR>', { desc = 'Lspsaga: Show Line Diagnostics' })
 
 -- Press <leader>nl (New Link) to turn the word under cursor into a [[Link]]
 vim.keymap.set('n', '<leader>nl', 'viw<cmd>ObsidianLink<CR>', { desc = 'Link word under cursor' })
 
 -- Add this to your init.lua keymaps section
 -- Pressing 'gl' in normal mode will pop up the full error message in a floating window
-vim.keymap.set('n', 'gl', function()
-  vim.diagnostic.open_float(nil, {
-    focusable = false,
-    close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
-    border = 'rounded',
-    source = 'always',
-    prefix = ' ',
-    scope = 'cursor',
-  })
-end, { desc = 'Show full diagnostic message' })
+-- vim.keymap.set('n', 'gl', function()
+--   vim.diagnostic.open_float(nil, {
+--     focusable = false,
+--     close_events = { 'BufLeave', 'CursorMoved', 'InsertEnter', 'FocusLost' },
+--     border = 'rounded',
+--     source = 'always',
+--     prefix = ' ',
+--     scope = 'cursor',
+--   })
+-- end, { desc = 'Show full diagnostic message' })
 
 -- vim.keymap.set('n', '<C-i>', function()
 --   vim.cmd 'normal! gUiw' -- uppercase word
@@ -624,6 +639,18 @@ require('lazy').setup({
           --  For example, in C this would take you to the header.
           map('grD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
+          -- Sweep the entire file and automatically apply all safe LSP fixes
+          -- This will instantly inject missing 'const' and 'constexpr' tags everywhere
+          map('<leader>la', function()
+            vim.lsp.buf.code_action {
+              context = {
+                only = { 'source.fixAll' },
+                diagnostics = {},
+              },
+              apply = true,
+            }
+          end, '[L]sp Apply [A]ll Fixes')
+
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
           map('gO', require('telescope.builtin').lsp_document_symbols, 'Open Document Symbols')
@@ -970,8 +997,15 @@ require('lazy').setup({
       -- See :h blink-cmp-config-fuzzy for more information
       fuzzy = {
         implementation = 'prefer_rust_with_warning',
-        sorts = { 'score', 'sort_text' },
+        sorts = { 'exact', 'score', 'sort_text' },
       },
+
+      use_frecency = true,
+      use_proximity = true,
+
+      max_typos = function()
+        return 0
+      end,
 
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
