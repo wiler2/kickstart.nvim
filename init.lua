@@ -1070,6 +1070,13 @@ require('lazy').setup({
 
           -- 'o' (loop) uses the dictionary to select entire while/for loops!
           o = gen_spec.treesitter { a = '@loop.outer', i = '@loop.inner' },
+
+          -- 'i' specifically for conditional statements (if, else, switch)
+          i = gen_spec.treesitter { a = '@conditional.outer', i = '@conditional.inner' },
+
+          -- 'k' specifically for generic code blocks (like { ... } or do ... end)
+          -- (Using 'k' instead of 'b' because mini.ai uses 'b' natively for brackets/parentheses)
+          k = gen_spec.treesitter { a = '@block.outer', i = '@block.inner' },
         },
       }
 
