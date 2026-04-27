@@ -1000,13 +1000,6 @@ require('lazy').setup({
         sorts = { 'exact', 'score', 'sort_text' },
       },
 
-      use_frecency = true,
-      use_proximity = true,
-
-      max_typos = function()
-        return 0
-      end,
-
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
     },
