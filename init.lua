@@ -118,7 +118,7 @@ vim.schedule(function()
   vim.o.clipboard = 'unnamedplus'
 end)
 
-vim.opt.conceallevel = 2
+-- vim.opt.conceallevel = 0
 
 -- Enable break indent
 vim.o.breakindent = true
@@ -283,18 +283,6 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     vim.hl.on_yank()
   end,
 })
-
--- Toggle Render Markdown (The "Notion" view)
-vim.keymap.set('n', '<leader>mt', ':RenderMarkdown toggle<CR>', { desc = 'Toggle Markdown Rendering' })
-
--- Toggle Conceal (The "Clean" view)
-vim.keymap.set('n', '<leader>mc', function()
-  if vim.opt.conceallevel:get() == 0 then
-    vim.opt.conceallevel = 2
-  else
-    vim.opt.conceallevel = 0
-  end
-end, { desc = 'Toggle Markdown Conceal' })
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -768,7 +756,7 @@ require('lazy').setup({
             'clangd',
             '--background-index',
             '--clang-tidy',
-            '--header-insertion=iwyu',
+            -- '--header-insertion=iwyu',
             '--completion-style=detailed',
             '--function-arg-placeholders',
             '--fallback-style=llvm',
@@ -899,6 +887,7 @@ require('lazy').setup({
     event = 'InsertEnter',
     version = '1.*',
     dependencies = {
+      'saghen/blink.compat',
       -- Snippet Engine
       {
         'L3MON4D3/LuaSnip',
@@ -971,7 +960,7 @@ require('lazy').setup({
       },
 
       sources = {
-        default = { 'lsp', 'path', 'snippets', 'lazydev' },
+        default = { 'lsp', 'path', 'snippets', 'lazydev', 'obsidian', 'obsidian_new', 'obsidian_tags' },
         providers = {
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
 
@@ -982,6 +971,19 @@ require('lazy').setup({
           snippets = {
             module = 'blink.cmp.sources.snippets',
             score_offset = -10,
+          },
+
+          obsidian = {
+            name = 'obsidian',
+            module = 'blink.compat.source',
+          },
+          obsidian_new = {
+            name = 'obsidian_new',
+            module = 'blink.compat.source',
+          },
+          obsidian_tags = {
+            name = 'obsidian_tags',
+            module = 'blink.compat.source',
           },
         },
       },
@@ -1114,11 +1116,11 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     event = { 'BufReadPre', 'BufNewFile', 'VeryLazy' },
     build = ':TSUpdate',
-    branch = 'master',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    branch = 'main',
+    main = 'nvim-treesitter.config', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'cpp', 'c', 'diff', 'lua', 'luadoc', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'cpp', 'c', 'diff', 'lua', 'luadoc', 'query', 'vim', 'vimdoc', 'markdown', 'markdown_inline' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {

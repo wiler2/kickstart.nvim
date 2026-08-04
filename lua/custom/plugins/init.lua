@@ -161,17 +161,36 @@ return {
           path = '~/Documents/Brain', -- This is your new path!
         },
       },
+      ui = {
+        enable = false,
+      },
+
+      completion = {
+        nvim_cmp = true, -- Enables source registration for blink.compat
+        min_chars = 2,
+      },
+
+      -- Custom Note ID/Filename Generator
+      note_id_func = function(title)
+        if title ~= nil then
+          -- Replaces spaces with underscores (or return title as-is)
+          return title:gsub(' ', '_')
+        else
+          -- Fallback if creating a note without a title
+          return tostring(os.time())
+        end
+      end,
 
       -- see below for full list of options 👇
     },
   },
 
-  {
-    'alex-popov-tech/store.nvim',
-    dependencies = { 'OXY2DEV/markview.nvim' },
-    opts = {},
-    cmd = 'Store',
-  },
+  -- {
+  --   'alex-popov-tech/store.nvim',
+  --   dependencies = { 'OXY2DEV/markview.nvim' },
+  --   opts = {},
+  --   cmd = 'Store',
+  -- },
 
   {
     'urtzienriquez/learnlua.nvim',
