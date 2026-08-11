@@ -175,6 +175,15 @@ vim.o.confirm = true
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
+-- Open compiler options (Space + c + o)
+vim.keymap.set('n', '<leader>co', '<cmd>CompilerOpen<cr>', { desc = 'Compiler: Open Options', noremap = true, silent = true })
+
+-- Stop current task, then Redo the last selected option (Space + c + r)
+vim.keymap.set('n', '<leader>cr', '<cmd>CompilerStop<cr><cmd>CompilerRedo<cr>', { desc = 'Compiler: Stop & Redo', noremap = true, silent = true })
+
+-- Toggle compiler results window (Space + c + t)
+vim.keymap.set('n', '<leader>ct', '<cmd>CompilerToggleResults<cr>', { desc = 'Compiler: Toggle Results', noremap = true, silent = true })
+
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
@@ -790,7 +799,7 @@ require('lazy').setup({
                 callSnippet = 'Replace',
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
-              -- diagnostics = { disable = { 'missing-fields' } },
+              diagnostics = { disable = { 'missing-fields' } },
             },
           },
         },
