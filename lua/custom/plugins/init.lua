@@ -4,6 +4,12 @@
 -- See the kickstart.nvim README for more information
 return {
 
+  {
+    'catgoose/nvim-colorizer.lua',
+    event = 'BufReadPre',
+    opts = {},
+  },
+
   { -- This plugin
     'Zeioth/compiler.nvim',
     cmd = { 'CompilerOpen', 'CompilerToggleResults', 'CompilerRedo' },
